@@ -14,13 +14,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/players")
 public class PlayerController {
 
     @Autowired
     private PlayerRepo playerRepo;
 
-    @GetMapping({"/",""})
+    @GetMapping({"/","/getAllPlayers"})
     public String getPlayers(Model model) {
         List<Player> players = playerRepo.findAll();
         model.addAttribute("players", players);
@@ -51,6 +50,10 @@ public class PlayerController {
             return new ResponseEntity<>(player, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    @GetMapping("/addPlayer")
+    public String getAddPlayer() {
+        return "addPlayer";
     }
 
     @PostMapping("/addPlayer")

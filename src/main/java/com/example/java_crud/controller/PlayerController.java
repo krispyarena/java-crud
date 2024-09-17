@@ -2,6 +2,7 @@ package com.example.java_crud.controller;
 
 import com.example.java_crud.model.Player;
 import com.example.java_crud.repositories.PlayerRepo;
+import com.example.java_crud.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,13 +17,30 @@ import java.util.Optional;
 public class PlayerController {
 
     @Autowired
+    private PlayerService playerService;
+
+    @Autowired
     private PlayerRepo playerRepo;
 
-    @GetMapping({"/","/getAllPlayers"})
-    public String getPlayers(Model model) {
-        List<Player> players = playerRepo.findAll();
-        model.addAttribute("players", players);
+    @GetMapping("/")
+    public String getPlayers() {
         return "index";
+    }
+
+    @GetMapping("/playersList")
+    public String getPlayersList(Model model) {
+
+        model.addAttribute("players", playerService.getAllPlayers());
+        return "playersListForm";
+    }
+
+    @GetMapping("/addPlayer")
+    public String addPlayer() {
+        return "addPlayerForm";
+    }
+    @PostMapping("/addPlayer")
+    public ResponseEntity<Player> addPlayer(@RequestBody Player player) {
+        playerService.addPlayer(player);
     }
 
     @GetMapping("/getPlayerById/{id}")
@@ -50,16 +67,6 @@ public class PlayerController {
             return new ResponseEntity<>(player, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-    @GetMapping("/addPlayer")
-    public String getAddPlayer() {
-        return "addPlayer";
-    }
-
-    @PostMapping("/addPlayer")
-    public ResponseEntity<Player> addPlayer(@RequestBody Player player) {
-        Player playerObj = playerRepo.save(player);
-        return new ResponseEntity<>(playerObj, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/deletePlayerById/{id}")

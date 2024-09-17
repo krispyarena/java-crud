@@ -5,32 +5,26 @@ import com.example.java_crud.repositories.PlayerRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@RestController
+@Controller
+@RequestMapping("/players")
 public class PlayerController {
 
     @Autowired
     private PlayerRepo playerRepo;
 
-    @GetMapping("/getAllPlayers")
-    public ResponseEntity<List<Player>> getAllPlayers() {
-        try{
-            List<Player> playerList = new ArrayList<>();
-            playerRepo.findAll().forEach(playerList::add);
-
-            if(playerList.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(playerList, HttpStatus.OK);
-        }
-        catch(Exception e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @GetMapping({"/",""})
+    public String getPlayers(Model model) {
+        List<Player> players = playerRepo.findAll();
+        model.addAttribute("players", players);
+        return "index";
     }
 
     @GetMapping("/getPlayerById/{id}")
